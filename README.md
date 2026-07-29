@@ -4,7 +4,7 @@ A demo-only, client-side build of the Churn Profile Builder (TikTok 30-day conte
 plan generator). This repo is for showing the product experience; it does not
 perform any real research, take payments, or require any API keys.
 
-To access the full product: https://tiktok30days.manus.space
+To access the full, working product: https://tiktok30days.manus.space
 
 ## What's kept for reference
 
