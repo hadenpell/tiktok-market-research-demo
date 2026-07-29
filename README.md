@@ -1,4 +1,4 @@
-# Churn Profile Builder — Demo
+# Churn Profile Builder Demo
 
 A demo-only, client-side build of the Churn Profile Builder (TikTok 30-day content
 plan generator). This repo is for showing the product experience; it does not
