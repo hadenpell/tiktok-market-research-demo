@@ -10,8 +10,8 @@ To access the full product: https://tiktok30days.manus.space
 
 [reference/research-prompts.ts](reference/research-prompts.ts) contains the two
 prompts the production app sends to a Manus agent to do the real research
-(niche video scraping + hook pattern extraction, then personalized topic banks
-& calendar). They're included so this repo documents how the real thing works,
+(niche video scraping + hook pattern extraction, then personalized topic banks and calendar). 
+They're included so this repo documents how the real thing works,
 but the file is never imported — nothing here calls out to Apify, TikTok, or
 an LLM.
 
