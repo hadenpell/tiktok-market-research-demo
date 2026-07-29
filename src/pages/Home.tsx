@@ -17,6 +17,76 @@ import {
 // data and a Manus agent; this demo build never makes that call — it always
 // returns this same fixed plan a few seconds after "Create my 30-day content
 // plan" is clicked, regardless of what's entered in the intake form.
+const DEMO_TOPIC_BANKS: TopicBank[] = [
+  {
+    id: "howto",
+    emoji: "🎓",
+    label: "How-to / Tutorial",
+    hashtags: ["#sciaticarelief", "#backpain", "#physiotherapy", "#painrelief", "#spinehealth"],
+    tips: "Film in good light, show the exercise clearly. Keep it under 60 seconds.",
+    topics: [
+      { topic: "Quick 30-second sciatica relief stretch", hook: "Stop your sciatica pain in 30 seconds", hookFamily: "Tactical/Value" },
+      { topic: "3 exercises that make sciatica worse", hook: "Stop doing these 3 stretches if you have back pain", hookFamily: "Loss Aversion/FOMO" },
+      { topic: "The nerve floss technique for sciatica", hook: "The stretch your physio won't show you", hookFamily: "Curiosity-Gap" },
+      { topic: "Morning routine to prevent sciatica flare-ups", hook: "5 minutes every morning eliminated my sciatica", hookFamily: "Authority/Proof" },
+      { topic: "How to sit correctly with sciatica", hook: "You're sitting wrong — here's how to fix it", hookFamily: "Curiosity-Gap" },
+    ],
+  },
+  {
+    id: "testimonial",
+    emoji: "⭐",
+    label: "Testimonials",
+    hashtags: ["#sciaticarecovery", "#backpainrelief", "#healingjourney", "#physiotherapy", "#painfree"],
+    tips: "Lead with the result, then tell the story. Real patients are most compelling.",
+    topics: [
+      { topic: "Patient who avoided surgery after 3 sessions", hook: "I fixed my sciatica in 3 days", hookFamily: "Authority/Proof" },
+      { topic: "Recovery story after being told surgery was the only option", hook: "Surgery is NOT the only option", hookFamily: "Controversy/Engagement-Bait" },
+      { topic: "Patient who walked again after being told they wouldn't", hook: "They said I'd never walk again", hookFamily: "Aspiration/Desire" },
+      { topic: "Client who went from bedbound to pain-free in 2 weeks", hook: "My sciatica disappeared in 2 weeks", hookFamily: "Authority/Proof" },
+    ],
+  },
+  {
+    id: "th-hottake",
+    emoji: "🔥",
+    label: "Talking Head: Hot Take",
+    hashtags: ["#sciatica", "#backpain", "#physio", "#healthtips", "#spinehealth"],
+    tips: "Be direct and confident. State your hot take in the first 3 seconds.",
+    topics: [
+      { topic: "Why most doctors get sciatica treatment wrong", hook: "What surgeons don't want you to know", hookFamily: "Curiosity-Gap" },
+      { topic: "Why surgery is overused for sciatica", hook: "The truth about sciatica surgery", hookFamily: "Controversy/Engagement-Bait" },
+      { topic: "Why rest makes sciatica worse", hook: "Unpopular opinion: rest is ruining your sciatica", hookFamily: "Controversy/Engagement-Bait" },
+      { topic: "Why painkillers don't fix sciatica", hook: "Painkillers are making your sciatica worse", hookFamily: "Loss Aversion/FOMO" },
+    ],
+  },
+];
+
+// Builds the 30-day calendar by cycling through each bank's own topics, so
+// every day's suggestedHook is a real hook from that day's topic bank rather
+// than a placeholder string. HookSelectModal already hides a bank topic from
+// the "pick from bank" list once it's used as the day's suggested hook (it
+// matches on hook text), so there's no separate "remove from bank" step —
+// each hook still lives in exactly one bank, just reused across the days that
+// share its typeRef (there are more calendar days per type than bank topics).
+function buildDemoCalendar(banks: TopicBank[]): CalendarDay[] {
+  const typeCycle = banks.map((b) => b.id);
+  const usedCount: Record<string, number> = {};
+  return Array.from({ length: 30 }, (_, i) => {
+    const typeRef = typeCycle[i % typeCycle.length];
+    const bank = banks.find((b) => b.id === typeRef);
+    const topics = bank?.topics || [];
+    const idx = topics.length > 0 ? (usedCount[typeRef] ?? 0) % topics.length : 0;
+    usedCount[typeRef] = (usedCount[typeRef] ?? 0) + 1;
+    const chosen = topics[idx];
+    return {
+      day: i + 1,
+      week: Math.ceil((i + 1) / 7),
+      typeRef,
+      suggestedHook: chosen?.hook ?? chosen?.topic ?? "",
+      topicDescription: chosen?.topic ?? "",
+    };
+  });
+}
+
 const DEMO_PLAN_RESULT: PlanResult = {
   nicheVideos: [
     { rank: 1, title: "Stop your sciatica pain in 30 seconds", views: "245K", likes: "12.3K", comments: "892", datePosted: "2 weeks ago", description: "Simple 30-second stretch that stops sciatica pain immediately" },
@@ -37,55 +107,8 @@ const DEMO_PLAN_RESULT: PlanResult = {
     { type: "Speed / urgency", example: "Stop your sciatica pain in 30 seconds", whyItWorks: "Specific timeframe makes the promise feel achievable and real" },
     { type: "Personal story", example: "They said I'd never walk again", whyItWorks: "Emotional stakes draw viewers in and build credibility" },
   ],
-  topicBanks: [
-    {
-      id: "howto",
-      emoji: "🎓",
-      label: "How-to / Tutorial",
-      hashtags: ["#sciaticarelief", "#backpain", "#physiotherapy", "#painrelief", "#spinehealth"],
-      tips: "Film in good light, show the exercise clearly. Keep it under 60 seconds.",
-      topics: [
-        { topic: "Quick 30-second sciatica relief stretch", hook: "Stop your sciatica pain in 30 seconds", hookFamily: "Tactical/Value" },
-        { topic: "3 exercises that make sciatica worse", hook: "Stop doing these 3 stretches if you have back pain", hookFamily: "Loss Aversion/FOMO" },
-        { topic: "The nerve floss technique for sciatica", hook: "The stretch your physio won't show you", hookFamily: "Curiosity-Gap" },
-        { topic: "Morning routine to prevent sciatica flare-ups", hook: "5 minutes every morning eliminated my sciatica", hookFamily: "Authority/Proof" },
-        { topic: "How to sit correctly with sciatica", hook: "You're sitting wrong — here's how to fix it", hookFamily: "Curiosity-Gap" },
-      ],
-    },
-    {
-      id: "testimonial",
-      emoji: "⭐",
-      label: "Testimonials",
-      hashtags: ["#sciaticarecovery", "#backpainrelief", "#healingjourney", "#physiotherapy", "#painfree"],
-      tips: "Lead with the result, then tell the story. Real patients are most compelling.",
-      topics: [
-        { topic: "Patient who avoided surgery after 3 sessions", hook: "I fixed my sciatica in 3 days", hookFamily: "Authority/Proof" },
-        { topic: "Recovery story after being told surgery was the only option", hook: "Surgery is NOT the only option", hookFamily: "Controversy/Engagement-Bait" },
-        { topic: "Patient who walked again after being told they wouldn't", hook: "They said I'd never walk again", hookFamily: "Aspiration/Desire" },
-        { topic: "Client who went from bedbound to pain-free in 2 weeks", hook: "My sciatica disappeared in 2 weeks", hookFamily: "Authority/Proof" },
-      ],
-    },
-    {
-      id: "th-hottake",
-      emoji: "🔥",
-      label: "Talking Head: Hot Take",
-      hashtags: ["#sciatica", "#backpain", "#physio", "#healthtips", "#spinehealth"],
-      tips: "Be direct and confident. State your hot take in the first 3 seconds.",
-      topics: [
-        { topic: "Why most doctors get sciatica treatment wrong", hook: "What surgeons don't want you to know", hookFamily: "Curiosity-Gap" },
-        { topic: "Why surgery is overused for sciatica", hook: "The truth about sciatica surgery", hookFamily: "Controversy/Engagement-Bait" },
-        { topic: "Why rest makes sciatica worse", hook: "Unpopular opinion: rest is ruining your sciatica", hookFamily: "Controversy/Engagement-Bait" },
-        { topic: "Why painkillers don't fix sciatica", hook: "Painkillers are making your sciatica worse", hookFamily: "Loss Aversion/FOMO" },
-      ],
-    },
-  ],
-  calendar: Array.from({ length: 30 }, (_, i) => ({
-    day: i + 1,
-    week: Math.ceil((i + 1) / 7),
-    typeRef: ["howto", "th-hottake", "testimonial"][i % 3],
-    suggestedHook: `Sample hook for day ${i + 1}`,
-    topicDescription: `Topic for day ${i + 1}`,
-  })),
+  topicBanks: DEMO_TOPIC_BANKS,
+  calendar: buildDemoCalendar(DEMO_TOPIC_BANKS),
 };
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -846,11 +869,14 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [intakeErrors, setIntakeErrors] = useState<string[]>([]);
 
-  const [niche, setNiche] = useState("");
-  const [videoTypes, setVideoTypes] = useState<string[]>([]);
-  const [pillar1, setPillar1] = useState("");
-  const [pillar2, setPillar2] = useState("");
-  const [pillar3, setPillar3] = useState("");
+  // Pre-filled with example values matching DEMO_PLAN_RESULT's niche, so a
+  // visitor can walk through the whole app just by hitting submit — fields
+  // stay fully editable if they want to try their own inputs first.
+  const [niche, setNiche] = useState("Physiotherapist helping people over 50 recover from sciatica pain without surgery or medication");
+  const [videoTypes, setVideoTypes] = useState<string[]>(["How-to / Tutorial", "Testimonials", "Talking heads"]);
+  const [pillar1, setPillar1] = useState("Quick sciatica relief exercises");
+  const [pillar2, setPillar2] = useState("Patient recovery stories");
+  const [pillar3, setPillar3] = useState("Myths about sciatica surgery");
   const [pillar4, setPillar4] = useState("");
   const lastPayloadRef = useRef<IntakePayload | null>(null);
   const cancelledRef = useRef(false);
