@@ -5,6 +5,9 @@
   "private": true,
   "license": "MIT",
   "description": "Demo-only build of the Churn Profile Builder — runs entirely client-side against canned test data. No landing page, no payments, no API keys, no live research calls.",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",

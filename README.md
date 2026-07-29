@@ -17,7 +17,13 @@ an LLM.
 
 ## Running it
 
+Requires **Node 20+** (this repo targets whatever `.nvmrc` pins, currently 24).
+If `node --version` prints something older — commonly an old Homebrew/system
+install shadowing [nvm](https://github.com/nvm-sh/nvm) in your `PATH` — run
+`nvm use` first to switch to the pinned version for this repo:
+
 ```bash
+nvm use
 npm install
 npm run dev
 ```
