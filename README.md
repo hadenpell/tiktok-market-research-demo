@@ -15,6 +15,9 @@ They're included so this repo documents how the real thing works,
 but the file is never imported — nothing here calls out to Apify, TikTok, or
 an LLM.
 
+calendar_pipeline_flowchart.html Explains the infrastructure of the full project.
+
+
 ## Running it
 
 Requires **Node 20+** (this repo targets whatever `.nvmrc` pins, currently 24).
