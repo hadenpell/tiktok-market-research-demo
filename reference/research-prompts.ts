@@ -156,52 +156,6 @@ NICHE CONTEXT (already researched - do NOT re-research):
 Top performing videos in this niche include:
 ${nicheVideosSummary}
 
-== HOOK PATTERN LIBRARY (internal reference — do NOT expose to user) ==
-
-Use this library to enrich the topic banks. Your process:
-1. Internally tag each scraped hook above with its family (Curiosity-Gap, Authority/Proof, Loss Aversion/FOMO, Relatability/Identity, Controversy/Engagement-Bait, Aspiration/Desire, Tactical/Value, Pattern-Interrupt/Visual).
-2. Identify which families are VALIDATED (appeared in the scraped hooks) vs UNVALIDATED (not seen).
-3. For each topic bank, PRIORITIZE hooks from VALIDATED families — generate 2-4 more hooks per validated family using this niche's vocab, pain points, and misconceptions.
-4. Only use UNVALIDATED families if you run out of hooks from validated families (this should be rare).
-5. Assign a hookFamily to every hook you generate (for internal use — it will appear in the JSON output).
-6. When assigning hooks to calendar days, match the hook's best format to the day's typeRef (e.g., Listicle hooks go to th-listicle days, Transformation hooks go to testimonial/howto days).
-
-HOOK FAMILIES AND FORMULAS:
-
-Curiosity-Gap: "Everything you know about [topic] is wrong." | "Here's what [experts] don't want you to know about [topic]." | "I almost [bad outcome] until I discovered [X]" | "Nobody talks about [X], but..." | "You're probably doing [X] wrong." | "Here's what people get wrong about [topic]."
-
-Authority/Proof: "As a [profession] with [X] years of experience..." | "I [impressive result] in [timeframe] — here's how." | "I tested [X] for 30 days — the result surprised me." | "This [thing] helped [number] of my [audience] do [result]."
-
-Loss Aversion/FOMO: "Stop making this mistake with your [topic]." | "Stop [common action] if you want [outcome]." | "This [mistake] is costing you [specific loss]." | "[Number] mistakes [audience] make in their first [milestone]."
-
-Relatability/Identity: "If you're a [specific person] who [specific struggle], this is for you." | "POV: you're [X] and [situation]." | "I'm going to admit something I've never told anyone..." | "I was today years old when I found out [surprising fact]."
-
-Controversy/Engagement-Bait: "Unpopular opinion: [bold statement]." | "Hot take: [X]." | "Stop [common practice] — here's what actually works."
-
-Aspiration/Desire: "Imagine waking up and [dream scenario]." | "How I got [X] in [timeframe]."
-
-Tactical/Value: "Here's exactly how to [result] in [timeframe]." | "[Number] things you wish you knew before [milestone]." | "This tiny change doubled my [metric]." | "[Number] secrets to [achieving goal]."
-
-Pattern-Interrupt/Visual: "Stop scrolling if [outcome]." | "Don't buy [product] until you see this." (use sparingly)
-
-FORMAT-HOOK ALIGNMENT (match hook type to content format):
-- Talking Head days (th-listicle, th-hottake, th-insider, th-story, th-reaction, th-qa): Curiosity-Gap, Authority/Proof, Loss Aversion, Controversy, Relatability
-- Tutorial/How-to days (howto): Tactical/Value, Loss Aversion (mistake warnings), Curiosity-Gap
-- Testimonial days (testimonial): Authority/Proof, Aspiration/Desire, Relatability
-- Vlog/Day-in-life days (diml): Aspiration/Desire, Relatability/Identity, Pattern-Interrupt
-- Text+clip days (text-clip): Relatability/Identity (literal POV), Pattern-Interrupt, Curiosity-Gap
-- Carousel days (carousel): Tactical/Value (listicle hooks), Loss Aversion (mistake lists)
-
-COMMON HOOK-WRITING MISTAKES TO AVOID (internal guidance only):
-- Burying the hook behind setup — must land by second 3.
-- Greeting openers ("Hey guys, welcome back") — reads as YouTube, not TikTok.
-- Generic overused hooks ("You won't believe this") — now trigger scrolling.
-- Vagueness — use specifics: numbers, names, timeframes.
-- Bait-and-switch — hook must match what the video delivers.
-- Overusing one formula — rotate across families.
-
-== END HOOK PATTERN LIBRARY ==
-
 YOUR TASK: Generate the personalized portion of the report as a single JSON object with this exact schema:
 {
   "topicBanks": [{ "id": "diml", "emoji": "emoji", "label": "Day in the life / Vlog", "hashtags": ["#hashtag"], "tips": "filming tips", "topics": [{ "topic": "Topic description", "hook": "Example hook", "hookFamily": "Curiosity-Gap" }] }],
