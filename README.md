@@ -20,13 +20,17 @@ an LLM.
 Requires **Node 20+** (this repo targets whatever `.nvmrc` pins, currently 24).
 If `node --version` prints something older — commonly an old Homebrew/system
 install shadowing [nvm](https://github.com/nvm-sh/nvm) in your `PATH` — run
-`nvm use` first to switch to the pinned version for this repo:
+`nvm install` first: it reads `.nvmrc`, installs that Node version if you
+don't already have it, and switches to it for this repo:
 
 ```bash
-nvm use
+nvm install
 npm install
 npm run dev
 ```
+
+No nvm? You'll need Node 20+ some other way (Homebrew, the official
+installer, fnm, volta, etc.) — `.nvmrc` only means something to nvm.
 
 Then open the printed local URL. `npm run build` produces a static bundle in
 `dist/` that can be hosted anywhere (Vercel, Netlify, S3, etc.) with zero
