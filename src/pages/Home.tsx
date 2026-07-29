@@ -612,6 +612,7 @@ function ResultsView({
   });
   const [hookModal, setHookModal] = useState<{ dayNum: number } | null>(null);
   const [recreationModal, setRecreationModal] = useState<{ dayNum: number } | null>(null);
+  const [confirmingReset, setConfirmingReset] = useState(false);
 
   const bankById: Record<string, TopicBank> = {};
   (data.topicBanks || []).forEach((b) => { bankById[b.id] = b; });
@@ -662,17 +663,34 @@ function ResultsView({
     <div>
       <div className="content-col" style={{ paddingTop: 8, marginBottom: 8 }}>
         <h1 className="h1-big" style={{ textAlign: "center", marginBottom: 18 }}>Your 30-day plan</h1>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-          <button
-            className="btn btn-secondary"
-            style={{ fontSize: "0.8rem", padding: "6px 16px", opacity: 0.8 }}
-            onClick={() => {
-              if (!confirm("Reset this demo plan? This clears your local demo data so you can generate a new one.")) return;
-              onReset();
-            }}
-          >
-            🔄 Reset & start over
-          </button>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 12 }}>
+          {confirmingReset ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", justifyContent: "center" }}>
+              <span style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
+                Reset this demo plan? This clears your local demo data.
+              </span>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={onReset}
+              >
+                Yes, reset
+              </button>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => setConfirmingReset(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
+            <button
+              className="btn btn-secondary"
+              style={{ fontSize: "0.8rem", padding: "6px 16px", opacity: 0.8 }}
+              onClick={() => setConfirmingReset(true)}
+            >
+              🔄 Reset & start over
+            </button>
+          )}
         </div>
         <div className="toc" style={{ justifyContent: "center" }}>
           {tocItems.map((item) => (
