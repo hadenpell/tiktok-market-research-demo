@@ -1,0 +1,94 @@
+<!doctype html>
+<html><head><meta charset="UTF-8">
+<style>
+  body { margin:0; padding:40px; background:#EDEBE3; font-family: -apple-system, "Segoe UI", Arial, sans-serif; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .card { background:#FFFFFF; border:1px solid #C4C1B5; border-radius:12px; padding:18px 22px; }
+  .dashed { border-style:dashed; background:#FAF9F5; }
+  .tag { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:4px 12px; border-radius:100px; margin-bottom:10px; }
+  .title { font-size:16px; font-weight:600; color:#1E1E1C; margin:0 0 6px; }
+  .body { font-size:13.5px; color:#5F5E5A; line-height:1.55; margin:0; }
+  .arrow { display:flex; justify-content:center; color:#B4B2A9; font-size:22px; margin:6px 0; }
+  .tag-app { background:#F1EFE8; color:#2C2C2A; }
+  .tag-ai  { background:#EEEDFE; color:#26215C; }
+  .tag-ext { background:#FAECE7; color:#4A1B0C; }
+  .tag-doc { background:#E1F5EE; color:#04342C; }
+  .row { display:flex; gap:16px; }
+  .row .card { flex:1; }
+  .legend { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; margin-top:28px; padding-top:18px; border-top:1px solid #C4C1B5; }
+  .legend-item { display:flex; align-items:center; gap:7px; font-size:12.5px; color:#5F5E5A; }
+  .swatch { width:11px; height:11px; border-radius:3px; }
+</style></head>
+<body><div class="wrap">
+
+<div class="card">
+  <span class="tag tag-app">Front-end app</span>
+  <p class="title">Intake form</p>
+  <p class="body">User provides their niche, what video formats they can film, and 2-4 content pillars.</p>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="card">
+  <span class="tag tag-ai">Manus LLM</span>
+  <p class="title">Parse the request</p>
+  <p class="body">Turns the intake into a structured research query for that niche.</p>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="card">
+  <span class="tag tag-ext">Apify API (external)</span>
+  <p class="title">Search for top-performing videos</p>
+  <p class="body">Searches TikTok for videos matching the niche with 1,000+ likes. Returns likes, saves, shares, captions, hashtags, and a URL for each.</p>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="row">
+  <div class="card">
+    <span class="tag tag-ext">Apify API</span>
+    <p class="title">Raw metadata</p>
+    <p class="body">Likes, saves, shares, captions, hashtags, and URLs move forward as-is.</p>
+  </div>
+  <div class="card">
+    <span class="tag tag-ext">Browser agent</span>
+    <p class="title">Visit each URL</p>
+    <p class="body">Screenshots each video and reads the on-screen text, since captions often don't match the real hook.</p>
+  </div>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="card">
+  <span class="tag tag-ai">Manus LLM</span>
+  <p class="title">Combine and organize</p>
+  <p class="body">Surfaces the 10 real results with links for reference, highlights the hook patterns it found, and starts building the calendar from hooks derived directly from this niche's research.</p>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="row" style="align-items:stretch">
+  <div class="card dashed" style="flex:0 0 180px; display:flex; flex-direction:column; justify-content:center;">
+    <span class="tag tag-doc">Reference doc</span>
+    <p class="title">General hook guide</p>
+    <p class="body">A library of hook types by psychological category, not tied to any niche.</p>
+  </div>
+  <div style="display:flex; align-items:center; color:#B4B2A9; font-size:20px;">&#8594;</div>
+  <div class="card">
+    <span class="tag tag-ai">Manus LLM</span>
+    <p class="title">Fill remaining gaps</p>
+    <p class="body">Where research alone can't fill 30 days, expands validated categories and adapts general templates to fit the niche.</p>
+  </div>
+</div>
+<div class="arrow">&#8595;</div>
+
+<div class="card">
+  <span class="tag tag-app">Front-end app</span>
+  <p class="title">30-day calendar output</p>
+  <p class="body">Every day gets 5-7 hook suggestions, fully editable, with the option to write your own.</p>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="swatch" style="background:#F1EFE8"></span>App / user-facing</div>
+  <div class="legend-item"><span class="swatch" style="background:#7F77DD"></span>Manus LLM</div>
+  <div class="legend-item"><span class="swatch" style="background:#D85A30"></span>External tool</div>
+  <div class="legend-item"><span class="swatch" style="background:#5DCAA5"></span>Reference document</div>
+</div>
+
+</div></body></html>
