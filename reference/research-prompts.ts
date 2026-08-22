@@ -31,7 +31,7 @@
 //   5. HOOK PATTERNS — 5-7 patterns derived only from returned videos.
 //
 // The full prompt text (with placeholders for runtime values) is documented in
-// CURRENT_PRODUCTION_PROMPTS_EDITABLE.md in this repository.
+// PROMPT_REFERENCE.md in this repository.
 
 export const PHASE_1_SUMMARY = `
 You are performing TikTok niche research for the Churn Method.
