@@ -63,7 +63,7 @@ Steps:
 //   3. HASHTAGS — 5 per topic bank, niche-specific.
 //
 // The full prompt text (with the hook pattern library, format guide, and visual
-// hook tips) is documented in CURRENT_PRODUCTION_PROMPTS_EDITABLE.md.
+// hook tips) is documented in PROMPT_REFERENCE.md.
 
 export const PHASE_2_SUMMARY = `
 You are building a personalized TikTok content plan for the Churn Method.
