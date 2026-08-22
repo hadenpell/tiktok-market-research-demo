@@ -871,12 +871,18 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [intakeErrors, setIntakeErrors] = useState<string[]>([]);
 
-  const [niche, setNiche] = useState("");
-  const [videoTypes, setVideoTypes] = useState<string[]>([]);
-  const [pillar1, setPillar1] = useState("");
-  const [pillar2, setPillar2] = useState("");
-  const [pillar3, setPillar3] = useState("");
-  const [pillar4, setPillar4] = useState("");
+  const [niche, setNiche] = useState("Starting and running an independent coffee shop");
+  const [videoTypes, setVideoTypes] = useState<string[]>([
+    "Vlogs",
+    "How-to / Tutorial",
+    "Talking heads",
+    "Text + clip + music",
+    "Carousels",
+  ]);
+  const [pillar1, setPillar1] = useState("Coffee brewing and barista education");
+  const [pillar2, setPillar2] = useState("Behind the scenes of cafe ownership");
+  const [pillar3, setPillar3] = useState("Small business lessons and advice");
+  const [pillar4, setPillar4] = useState("Coffee culture and customer stories");
   const lastPayloadRef = useRef<IntakePayload | null>(null);
   const cancelledRef = useRef(false);
 
@@ -1016,6 +1022,21 @@ export default function Home() {
           <h1 className="h1-big" style={{ textAlign: "center" }}>Build your 30-day content plan</h1>
           <div className="sec-sub" style={{ marginBottom: 24, textAlign: "center" }}>
             Tell us about your niche and content style. We'll research what's working, then build a personalised hook and topic bank for your 30-day calendar.
+          </div>
+          <div
+            role="note"
+            style={{
+              marginBottom: 24,
+              padding: "14px 16px",
+              border: "1px solid #f0c38d",
+              borderRadius: 10,
+              background: "#fff6ea",
+              color: "#6a3d10",
+              fontSize: "0.9rem",
+              lineHeight: 1.55,
+            }}
+          >
+            <b>Demo only — no live research is performed.</b> The values below are fictional examples to show the intake experience. Submitting this form does not call TikTok, Apify, Manus, or any other API; it simply opens the pre-built sample plan.
           </div>
           {/* Niche */}
           <div className="field">
