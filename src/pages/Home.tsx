@@ -596,6 +596,7 @@ function ResultsView({
 
   const bankById: Record<string, TopicBank> = {};
   (data.topicBanks || []).forEach((b) => { bankById[b.id] = b; });
+  const hasHookPatterns = (data.hookPatterns || []).length > 0;
 
   const weeks: Record<number, CalendarDayState[]> = {};
   calendarDays.forEach((day) => {
@@ -776,42 +777,69 @@ function ResultsView({
         })}
 
       {/* Hook patterns */}
-      <div className="section-block" id="r-patterns">
-        <div className="content-col">
-          <span className="section-eyebrow">Analysis</span>
-          <h2 className="section-heading">🔑 Hook patterns that work in your niche</h2>
-        </div>
-      </div>
-      <div className="content-col">
-        {(data.hookPatterns || []).map((hp, i) => (
-          <div key={i} className="churn-card" style={{ marginBottom: 12 }}>
-            <div style={{ fontWeight: 700, marginBottom: 4 }}>{hp.type}</div>
-            <div style={{ fontStyle: "italic", marginBottom: 4 }}>"{hp.example}"</div>
-            <div style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>{hp.whyItWorks}</div>
+      {hasHookPatterns && (
+        <>
+          <div className="section-block" id="r-patterns">
+            <div className="content-col">
+              <span className="section-eyebrow">Hook Strategy</span>
+              <h2 className="section-heading">🔑 Hook patterns that work here</h2>
+            </div>
           </div>
-        ))}
-      </div>
+          <div className="churn-card content-col">
+            {(data.hookPatterns || []).map((hp, i) => (
+              <div key={i} className="hprow">
+                <div className="hp-type">{hp.type}</div>
+                <div className="hp-ex">{hp.example}</div>
+                <div className="hp-why">{hp.whyItWorks}</div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {/* General principles */}
       <div className="section-block" id="r-principles">
         <div className="content-col">
-          <span className="section-eyebrow">Best Practices</span>
-          <h2 className="section-heading">💡 General principles</h2>
+          <span className="section-eyebrow">Principles</span>
+          <h2 className="section-heading">💡 Principles for stronger hooks</h2>
         </div>
       </div>
-      <div className="content-col">
-        <ul className="checklist" style={{ marginBottom: 24 }}>
-          {data.generalPrinciples.map((p, i) => (
-            <li key={i} dangerouslySetInnerHTML={{ __html: p }} />
+      <div className="churn-card content-col">
+        <ol className="obs-list">
+          {(data.generalPrinciples || []).map((p, i) => (
+            <li key={i}><span dangerouslySetInnerHTML={{ __html: p }} /></li>
           ))}
-        </ul>
-        <h3 style={{ fontWeight: 700, marginBottom: 8 }}>📅 Daily engagement checklist</h3>
+        </ol>
+      </div>
+
+      {/* Daily engagement */}
+      <div className="section-block">
+        <div className="content-col">
+          <span className="section-eyebrow">Daily Habits</span>
+          <h2 className="section-heading">💬 Every day: engagement</h2>
+        </div>
+      </div>
+      <div className="churn-card content-col">
         <ul className="checklist">
-          {data.dailyEngagement.map((d, i) => (
+          {(data.dailyEngagement || []).map((d, i) => (
             <li key={i}>{d}</li>
           ))}
         </ul>
       </div>
+
+      {/* Consult CTA */}
+      <div className="section-block"><div className="content-col"><div className="consult">
+        <h3>Want more in-depth, 1:1 support?</h3>
+        <p>Schedule a consult call with Churn for personalized coaching and strategy tailored to your account.</p>
+        <a href="https://agencychurn.com/#services" target="_blank" rel="noopener noreferrer">
+          Schedule a consult call →
+        </a>
+      </div></div></div>
+
+      {/* Disclaimer */}
+      <div className="content-col"><div className="disclaimer">
+        <b>Disclaimer.</b> Results are not guaranteed. Growth on TikTok depends on your content, consistency, and factors outside anyone's control, including changes to TikTok's algorithm. This tool provides strategy and research based on the Churn Method. It does not promise a specific number of views, followers, or income. Always follow TikTok's Community Guidelines and Terms of Service. Churn is not affiliated with, endorsed by, or sponsored by TikTok Inc. or ByteDance Ltd.
+      </div></div>
 
       {hookModal && activeHookDay && (
         <HookSelectModal
