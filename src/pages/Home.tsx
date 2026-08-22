@@ -10,110 +10,10 @@ import type {
 import {
   STATIC_CONTENT,
 } from "@shared/churnTypes";
-
-// ─── demo plan data ─────────────────────────────────────────────────────────
-// This is canned test data, not a live research result. The real app runs two
-// AI research passes (see reference/research-prompts.ts) against Apify/TikTok
-// data and a Manus agent; this demo build never makes that call — it always
-// returns this same fixed plan a few seconds after "Create my 30-day content
-// plan" is clicked, regardless of what's entered in the intake form.
-const DEMO_TOPIC_BANKS: TopicBank[] = [
-  {
-    id: "howto",
-    emoji: "🎓",
-    label: "How-to / Tutorial",
-    hashtags: ["#sciaticarelief", "#backpain", "#physiotherapy", "#painrelief", "#spinehealth"],
-    tips: "Film in good light, show the exercise clearly. Keep it under 60 seconds.",
-    topics: [
-      { topic: "Quick 30-second sciatica relief stretch", hook: "Stop your sciatica pain in 30 seconds", hookFamily: "Tactical/Value" },
-      { topic: "3 exercises that make sciatica worse", hook: "Stop doing these 3 stretches if you have back pain", hookFamily: "Loss Aversion/FOMO" },
-      { topic: "The nerve floss technique for sciatica", hook: "The stretch your physio won't show you", hookFamily: "Curiosity-Gap" },
-      { topic: "Morning routine to prevent sciatica flare-ups", hook: "5 minutes every morning eliminated my sciatica", hookFamily: "Authority/Proof" },
-      { topic: "How to sit correctly with sciatica", hook: "You're sitting wrong — here's how to fix it", hookFamily: "Curiosity-Gap" },
-    ],
-  },
-  {
-    id: "testimonial",
-    emoji: "⭐",
-    label: "Testimonials",
-    hashtags: ["#sciaticarecovery", "#backpainrelief", "#healingjourney", "#physiotherapy", "#painfree"],
-    tips: "Lead with the result, then tell the story. Real patients are most compelling.",
-    topics: [
-      { topic: "Patient who avoided surgery after 3 sessions", hook: "I fixed my sciatica in 3 days", hookFamily: "Authority/Proof" },
-      { topic: "Recovery story after being told surgery was the only option", hook: "Surgery is NOT the only option", hookFamily: "Controversy/Engagement-Bait" },
-      { topic: "Patient who walked again after being told they wouldn't", hook: "They said I'd never walk again", hookFamily: "Aspiration/Desire" },
-      { topic: "Client who went from bedbound to pain-free in 2 weeks", hook: "My sciatica disappeared in 2 weeks", hookFamily: "Authority/Proof" },
-    ],
-  },
-  {
-    id: "th-hottake",
-    emoji: "🔥",
-    label: "Talking Head: Hot Take",
-    hashtags: ["#sciatica", "#backpain", "#physio", "#healthtips", "#spinehealth"],
-    tips: "Be direct and confident. State your hot take in the first 3 seconds.",
-    topics: [
-      { topic: "Why most doctors get sciatica treatment wrong", hook: "What surgeons don't want you to know", hookFamily: "Curiosity-Gap" },
-      { topic: "Why surgery is overused for sciatica", hook: "The truth about sciatica surgery", hookFamily: "Controversy/Engagement-Bait" },
-      { topic: "Why rest makes sciatica worse", hook: "Unpopular opinion: rest is ruining your sciatica", hookFamily: "Controversy/Engagement-Bait" },
-      { topic: "Why painkillers don't fix sciatica", hook: "Painkillers are making your sciatica worse", hookFamily: "Loss Aversion/FOMO" },
-    ],
-  },
-];
-
-// Builds the 30-day calendar by cycling through each bank's own topics, so
-// every day's suggestedHook is a real hook from that day's topic bank rather
-// than a placeholder string. HookSelectModal already hides a bank topic from
-// the "pick from bank" list once it's used as the day's suggested hook (it
-// matches on hook text), so there's no separate "remove from bank" step —
-// each hook still lives in exactly one bank, just reused across the days that
-// share its typeRef (there are more calendar days per type than bank topics).
-function buildDemoCalendar(banks: TopicBank[]): CalendarDay[] {
-  const typeCycle = banks.map((b) => b.id);
-  const usedCount: Record<string, number> = {};
-  return Array.from({ length: 30 }, (_, i) => {
-    const typeRef = typeCycle[i % typeCycle.length];
-    const bank = banks.find((b) => b.id === typeRef);
-    const topics = bank?.topics || [];
-    const idx = topics.length > 0 ? (usedCount[typeRef] ?? 0) % topics.length : 0;
-    usedCount[typeRef] = (usedCount[typeRef] ?? 0) + 1;
-    const chosen = topics[idx];
-    return {
-      day: i + 1,
-      week: Math.ceil((i + 1) / 7),
-      typeRef,
-      suggestedHook: chosen?.hook ?? chosen?.topic ?? "",
-      topicDescription: chosen?.topic ?? "",
-    };
-  });
-}
-
-const DEMO_PLAN_RESULT: PlanResult = {
-  nicheVideos: [
-    { rank: 1, title: "Stop your sciatica pain in 30 seconds", views: "245K", likes: "12.3K", comments: "892", datePosted: "2 weeks ago", description: "Simple 30-second stretch that stops sciatica pain immediately" },
-    { rank: 2, title: "I fixed my sciatica in 3 days", views: "189K", likes: "9.8K", comments: "654", datePosted: "3 weeks ago", description: "This one weird trick doctors don't want you to know" },
-    { rank: 3, title: "Surgery is NOT the only option", views: "156K", likes: "8.2K", comments: "521", datePosted: "1 month ago", description: "Here's what doctors won't tell you about sciatica" },
-    { rank: 4, title: "What surgeons don't want you to know", views: "134K", likes: "7.1K", comments: "445", datePosted: "1 month ago", description: "The real reason they recommend surgery" },
-    { rank: 5, title: "They said I'd never walk again", views: "128K", likes: "6.8K", comments: "412", datePosted: "6 weeks ago", description: "My sciatica recovery story" },
-    { rank: 6, title: "This one stretch changed everything", views: "119K", likes: "6.3K", comments: "378", datePosted: "6 weeks ago", description: "The stretch physical therapists recommend" },
-    { rank: 7, title: "Back pain? Stop doing these 3 stretches", views: "112K", likes: "5.9K", comments: "356", datePosted: "2 months ago", description: "These stretches make sciatica worse" },
-    { rank: 8, title: "The truth about sciatica surgery", views: "105K", likes: "5.5K", comments: "334", datePosted: "2 months ago", description: "Why I didn't get surgery" },
-    { rank: 9, title: "Doctors hate this one trick", views: "98K", likes: "5.2K", comments: "312", datePosted: "2 months ago", description: "Natural sciatica relief" },
-    { rank: 10, title: "My sciatica disappeared in 2 weeks", views: "92K", likes: "4.8K", comments: "289", datePosted: "3 months ago", description: "Here's exactly what I did" },
-  ],
-  hookPatterns: [
-    { type: "Curiosity gap", example: "What surgeons won't tell you about sciatica", whyItWorks: "Implies insider knowledge and creates urgency to watch" },
-    { type: "Transformation / result first", example: "I fixed my sciatica in 3 days", whyItWorks: "Leads with the outcome — viewer immediately knows the payoff" },
-    { type: "Contrarian / myth-bust", example: "Surgery is NOT the only option", whyItWorks: "Challenges a common belief, making the viewer stop to reconsider" },
-    { type: "Speed / urgency", example: "Stop your sciatica pain in 30 seconds", whyItWorks: "Specific timeframe makes the promise feel achievable and real" },
-    { type: "Personal story", example: "They said I'd never walk again", whyItWorks: "Emotional stakes draw viewers in and build credibility" },
-  ],
-  topicBanks: DEMO_TOPIC_BANKS,
-  calendar: buildDemoCalendar(DEMO_TOPIC_BANKS),
-};
+import { DEMO_PLAN_RESULT } from "../data/samplePlan";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
-// Map day number (1-30) to a weekday name, starting Monday for day 1
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 function getDayName(dayNum: number): string {
   return WEEKDAYS[(dayNum - 1) % 7];
@@ -123,7 +23,6 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Lookup table: typeRef ID → { emoji, label } for display when no matching topic bank exists
 const TYPE_REF_LABELS: Record<string, { emoji: string; label: string }> = {
   "howto":        { emoji: "🎓", label: "How-to / Tutorial" },
   "testimonial":  { emoji: "⭐", label: "Testimonials" },
@@ -141,26 +40,46 @@ const TYPE_REF_LABELS: Record<string, { emoji: string; label: string }> = {
 // ─── types ───────────────────────────────────────────────────────────────────
 type Screen = "input" | "loading" | "results";
 
-// Extended calendar day with user-selected hook
 interface CalendarDayState extends CalendarDay {
-  selectedHook?: string; // user-chosen hook text
+  selectedHook?: string;
   isEditing?: boolean;
   recreateFromDay?: number;
   recreateFormat?: string;
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  queued: "Queued...",
-  researching: "Researching your niche...",
-  analyzing: "Analyzing top-performing videos...",
-  building: "Building your hook and topic banks...",
-  assembling: "Assembling your 30-day calendar...",
-  done: "Done. Loading your plan...",
+// ─── constants ──────────────────────────────────────────────────────────────
+
+const VIDEO_TYPE_OPTIONS = [
+  "Vlogs",
+  "Day in the life",
+  "How-to / Tutorial",
+  "Testimonials",
+  "Talking heads",
+  "Text + clip + music",
+  "Trends",
+  "Carousels",
+];
+
+const VIDEO_TYPE_DESCRIPTIONS: Record<string, string> = {
+  "Vlogs": "Any video documenting an event, day, or process. Usually done with text overlay and a voiceover and/or background music and descriptive text.",
+  "Day in the life": "A specific type of vlog showcasing a daily routine. Example: Day in the life of a Harvard student.",
+  "How-to / Tutorial": "Educational content showcasing how to do something (e.g. an exercise or stretch) or discussing a topic in depth (e.g. the civil war).",
+  "Testimonials": "For small businesses with clients that have success stories. Testimonials can include transformations, before/after, or the client sharing their experience on camera.",
+  "Talking heads": "A video where the individual sits and talks to the camera providing information or telling a story to the audience, as if they were on FaceTime.",
+  "Text + clip + music": "One or more video clips with catchy music and a text overlay. No speaking.",
+  "Trends": "Any video, typically more fun and lighthearted, that adds a personal spin to a current TikTok trend. Can be a skit or simply using a trending audio with a relatable text overlay.",
+  "Carousels": "A series of still photos, usually with text overlaid.",
 };
 
-// Simulated progression through the same stages the real backend job reports,
-// so the loading screen behaves like production — just compressed to seconds
-// instead of minutes, since there's no real research happening.
+const STATUS_LABELS: Record<string, string> = {
+  queued: "Queued — waiting to start...",
+  researching: "Researching your niche on TikTok...",
+  analyzing: "Analyzing top-performing hooks...",
+  building: "Building your 30-day calendar...",
+  assembling: "Assembling your plan...",
+  done: "Done!",
+};
+
 const DEMO_LOADING_STEPS: { status: keyof typeof STATUS_LABELS; progress: number; delayMs: number }[] = [
   { status: "queued", progress: 8, delayMs: 400 },
   { status: "researching", progress: 35, delayMs: 1200 },
@@ -172,7 +91,68 @@ const DEMO_LOADING_STEPS: { status: keyof typeof STATUS_LABELS; progress: number
 
 const STORAGE_KEY = "churn-demo-plan";
 
-// ─── export helpers ──────────────────────────────────────────────────────────
+// ─── VideoTypeTooltip ───────────────────────────────────────────────────────
+
+function VideoTypeTooltip() {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <div
+      style={{ position: "relative", display: "inline-flex", alignItems: "center" }}
+      onMouseEnter={() => setVisible(true)}
+      onMouseLeave={() => setVisible(false)}
+    >
+      <div
+        style={{
+          width: 18,
+          height: 18,
+          borderRadius: "50%",
+          border: "1.5px solid #999",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 11,
+          fontWeight: 700,
+          color: "#666",
+          cursor: "default",
+          flexShrink: 0,
+          userSelect: "none",
+        }}
+      >
+        ?
+      </div>
+      {visible && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: "calc(100% + 8px)",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "#fff",
+            border: "1px solid #e5e0d8",
+            borderRadius: 10,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+            padding: "14px 16px",
+            width: 340,
+            zIndex: 100,
+            fontSize: 13,
+            lineHeight: 1.55,
+            color: "#333",
+          }}
+        >
+          {Object.entries(VIDEO_TYPE_DESCRIPTIONS).map(([type, desc]) => (
+            <div key={type} style={{ marginBottom: 10 }}>
+              <span style={{ fontWeight: 700 }}>{type}:</span>{" "}
+              <span>{desc}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── export helpers ─────────────────────────────────────────────────────────
 const EXPORT_HEADERS = ["Day", "Day of Week", "Week", "Video Type", "Selected Hook", "Topic Description", "Recreation?"];
 
 function buildExportRows(
@@ -224,7 +204,7 @@ function downloadExcel(rows: (string | number)[][], filename: string) {
   XLSX.writeFile(wb, filename);
 }
 
-// ─── sub-components ──────────────────────────────────────────────────────────
+// ─── sub-components ─────────────────────────────────────────────────────────
 
 function VideoCard({ v, rank }: { v: NicheVideo; rank?: number }) {
   const metric = (val: string | undefined, lab: string) =>
@@ -285,7 +265,7 @@ function Collapsible({
   );
 }
 
-// ─── Hook Selection Modal ─────────────────────────────────────────────────────
+// ─── Hook Selection Modal ───────────────────────────────────────────────────
 function HookSelectModal({
   day,
   bank,
@@ -445,7 +425,7 @@ function HookSelectModal({
   );
 }
 
-// ─── Recreation Modal ─────────────────────────────────────────────────────────
+// ─── Recreation Modal ───────────────────────────────────────────────────────
 function RecreationModal({
   day,
   onConfirm,
@@ -481,16 +461,16 @@ function RecreationModal({
         <div className="bank-subhead" style={{ marginBottom: 6 }}>Examples of how to recreate a hook:</div>
         <div className="bank-row" style={{ marginBottom: 6, background: "var(--muted, #f5f5f5)", borderRadius: 8 }}>
           <div style={{ fontSize: "0.88rem", color: "var(--foreground)" }}>
-            <span style={{ color: "var(--muted-foreground)" }}>"How I made $50K in 1 month"</span>
+            <span style={{ color: "var(--muted-foreground)" }}>"I opened a coffee shop with $5,000"</span>
             <span style={{ margin: "0 8px", fontWeight: 700 }}>→</span>
-            <span>"I made $50K in March - here's how I did it"</span>
+            <span>"How I started my cafe for under $5K"</span>
           </div>
         </div>
         <div className="bank-row" style={{ marginBottom: 16, background: "var(--muted, #f5f5f5)", borderRadius: 8 }}>
           <div style={{ fontSize: "0.88rem", color: "var(--foreground)" }}>
-            <span style={{ color: "var(--muted-foreground)" }}>"Stop doing these 3 stretches if you have back pain"</span>
+            <span style={{ color: "var(--muted-foreground)" }}>"Stop buying coffee equipment you don't need"</span>
             <span style={{ margin: "0 8px", fontWeight: 700 }}>→</span>
-            <span>"Back pain? Stop doing these 3 stretches"</span>
+            <span>"Coffee equipment? You only need these 3 things"</span>
           </div>
         </div>
 
@@ -522,7 +502,7 @@ function RecreationModal({
   );
 }
 
-// ─── Calendar Day Cell ────────────────────────────────────────────────────────
+// ─── Calendar Day Cell ──────────────────────────────────────────────────────
 function CalendarDayCell({
   day,
   bank,
@@ -586,7 +566,7 @@ function CalendarDayCell({
   );
 }
 
-// ─── Results View ─────────────────────────────────────────────────────────────
+// ─── Results View ───────────────────────────────────────────────────────────
 function ResultsView({
   data,
   savedCalendarState,
@@ -627,7 +607,7 @@ function ResultsView({
   function updateDay(dayNum: number, updates: Partial<CalendarDayState>) {
     setCalendarDays((prev) => {
       const next = prev.map((d) => (d.day === dayNum ? { ...d, ...updates } : d));
-      onCalendarChange(next); // fire-and-forget local persistence
+      onCalendarChange(next);
       return next;
     });
   }
@@ -669,18 +649,8 @@ function ResultsView({
               <span style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>
                 Reset this demo plan? This clears your local demo data.
               </span>
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={onReset}
-              >
-                Yes, reset
-              </button>
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={() => setConfirmingReset(false)}
-              >
-                Cancel
-              </button>
+              <button className="btn btn-primary btn-sm" onClick={onReset}>Yes, reset</button>
+              <button className="btn btn-secondary btn-sm" onClick={() => setConfirmingReset(false)}>Cancel</button>
             </div>
           ) : (
             <button
@@ -808,16 +778,16 @@ function ResultsView({
       {/* Hook patterns */}
       <div className="section-block" id="r-patterns">
         <div className="content-col">
-          <span className="section-eyebrow">Hook Strategy</span>
-          <h2 className="section-heading">🔑 Hook patterns that work here</h2>
+          <span className="section-eyebrow">Analysis</span>
+          <h2 className="section-heading">🔑 Hook patterns that work in your niche</h2>
         </div>
       </div>
-      <div className="churn-card content-col">
-        {(data.hookPatterns || []).map((h, i) => (
-          <div key={i} className="hprow">
-            <div className="hp-type">{h.type}</div>
-            <div className="hp-ex">{h.example}</div>
-            <div className="hp-why">{h.whyItWorks}</div>
+      <div className="content-col">
+        {(data.hookPatterns || []).map((hp, i) => (
+          <div key={i} className="churn-card" style={{ marginBottom: 12 }}>
+            <div style={{ fontWeight: 700, marginBottom: 4 }}>{hp.type}</div>
+            <div style={{ fontStyle: "italic", marginBottom: 4 }}>"{hp.example}"</div>
+            <div style={{ fontSize: "0.85rem", color: "var(--muted-foreground)" }}>{hp.whyItWorks}</div>
           </div>
         ))}
       </div>
@@ -825,37 +795,23 @@ function ResultsView({
       {/* General principles */}
       <div className="section-block" id="r-principles">
         <div className="content-col">
-          <span className="section-eyebrow">Principles</span>
-          <h2 className="section-heading">💡 Principles for stronger hooks</h2>
+          <span className="section-eyebrow">Best Practices</span>
+          <h2 className="section-heading">💡 General principles</h2>
         </div>
       </div>
-      <div className="churn-card content-col">
-        <ol className="obs-list">
-          {(data.generalPrinciples || []).map((o, i) => (
-            <li key={i}><span dangerouslySetInnerHTML={{ __html: o }} /></li>
+      <div className="content-col">
+        <ul className="checklist" style={{ marginBottom: 24 }}>
+          {data.generalPrinciples.map((p, i) => (
+            <li key={i} dangerouslySetInnerHTML={{ __html: p }} />
           ))}
-        </ol>
-      </div>
-
-      {/* Daily engagement */}
-      <div className="section-block">
-        <div className="content-col">
-          <span className="section-eyebrow">Daily Habits</span>
-          <h2 className="section-heading">💬 Every day: engagement</h2>
-        </div>
-      </div>
-      <div className="churn-card content-col">
+        </ul>
+        <h3 style={{ fontWeight: 700, marginBottom: 8 }}>📅 Daily engagement checklist</h3>
         <ul className="checklist">
-          {(data.dailyEngagement || []).map((en, i) => (
-            <li key={i}>{en}</li>
+          {data.dailyEngagement.map((d, i) => (
+            <li key={i}>{d}</li>
           ))}
         </ul>
       </div>
-
-      {/* Disclaimer */}
-      <div className="content-col"><div className="disclaimer">
-        <b>Disclaimer.</b> This is a demo build populated with sample data for illustration only — it does not reflect a real client's niche or performance data. Results are not guaranteed. Growth on TikTok depends on your content, consistency, and factors outside anyone's control, including changes to TikTok's algorithm. Churn is not affiliated with, endorsed by, or sponsored by TikTok Inc. or ByteDance Ltd.
-      </div></div>
 
       {hookModal && activeHookDay && (
         <HookSelectModal
@@ -877,7 +833,7 @@ function ResultsView({
   );
 }
 
-// ─── main page ───────────────────────────────────────────────────────────────
+// ─── main page ──────────────────────────────────────────────────────────────
 export default function Home() {
   const [screen, setScreen] = useState<Screen>("input");
   const [planGenerated, setPlanGenerated] = useState(false);
@@ -887,23 +843,17 @@ export default function Home() {
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [intakeErrors, setIntakeErrors] = useState<string[]>([]);
 
-  // Pre-filled with example values matching DEMO_PLAN_RESULT's niche, so a
-  // visitor can walk through the whole app just by hitting submit — fields
-  // stay fully editable if they want to try their own inputs first.
-  const [niche, setNiche] = useState("Physiotherapist helping people over 50 recover from sciatica pain without surgery or medication");
-  const [videoTypes, setVideoTypes] = useState<string[]>(["How-to / Tutorial", "Testimonials", "Talking heads"]);
-  const [pillar1, setPillar1] = useState("Quick sciatica relief exercises");
-  const [pillar2, setPillar2] = useState("Patient recovery stories");
-  const [pillar3, setPillar3] = useState("Myths about sciatica surgery");
+  const [niche, setNiche] = useState("");
+  const [videoTypes, setVideoTypes] = useState<string[]>([]);
+  const [pillar1, setPillar1] = useState("");
+  const [pillar2, setPillar2] = useState("");
+  const [pillar3, setPillar3] = useState("");
   const [pillar4, setPillar4] = useState("");
   const lastPayloadRef = useRef<IntakePayload | null>(null);
   const cancelledRef = useRef(false);
 
   useEffect(() => () => { cancelledRef.current = true; }, []);
 
-  // On mount, load a previously-generated demo plan from localStorage (if any)
-  // so a page refresh doesn't lose your place — mirrors the production app's
-  // "one saved plan per user" behavior, just stored locally instead of in a DB.
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
@@ -965,9 +915,6 @@ export default function Home() {
     return errors;
   }
 
-  // Simulates the same staged progress the real backend job reports
-  // (queued → researching → analyzing → building → assembling → done),
-  // compressed to a few seconds, then hands back the fixed demo plan.
   async function runDemoGeneration() {
     for (const step of DEMO_LOADING_STEPS) {
       await sleep(step.delayMs);
@@ -1045,26 +992,40 @@ export default function Home() {
           {/* Niche */}
           <div className="field">
             <div className="field-label">What's your niche?</div>
-            <div className="field-help">
-              Be as specific as possible — what you do, who you help, and what makes you unique. The AI uses this to research your niche and personalize your hooks.
+            <div className="field-help" style={{ marginBottom: 10 }}>
+              What kinds of videos are you going to make? Be specific, but refer more to the general topic of your account rather than a description of who you are, and don't be so specific that the AI cannot find any existing examples of similar content. Think about what key words you would use to search for videos if you were researching your desired niche to find inspiration for the types of videos you'd want to make.
             </div>
-            <div className="ps-example">
-              <b>Example:</b> <i>"Physiotherapist helping people over 50 recover from sciatica pain without surgery or medication"</i>
+            <div className="ps-example" style={{ marginBottom: 12 }}>
+              <div style={{ fontWeight: 700, marginBottom: 6 }}>Good Examples:</div>
+              <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.8 }}>
+                <li>Recovering from sciatica without surgery or medication</li>
+                <li>Physiotherapy for back pain</li>
+                <li>MBA student lifestyle</li>
+                <li>Fitness for men over 35</li>
+              </ul>
+              <div style={{ fontWeight: 700, marginTop: 12, marginBottom: 6 }}>Not-So-Great Examples</div>
+              <ul style={{ margin: 0, paddingLeft: 20, lineHeight: 1.8 }}>
+                <li>Fitness coaching <span style={{ color: "#888", fontWeight: 400 }}>(too generic)</span></li>
+                <li>Fitness coaching for 18 year old lego builders <span style={{ color: "#888", fontWeight: 400 }}>(too specific, likely to not have market data)</span></li>
+              </ul>
             </div>
             <input
               type="text"
               className="churn-input"
-              placeholder="e.g. Physiotherapist helping people over 50 recover from sciatica pain"
+              placeholder=""
               value={niche}
               onChange={(e) => setNiche(e.target.value)}
             />
           </div>
           {/* Video types */}
           <div className="field">
-            <div className="field-label">What kinds of videos are you able to make?</div>
-            <div className="field-help">Select all that apply. This shapes what shows up on your calendar.</div>
+            <div className="field-label" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              What kinds of videos are you able to make?
+              <VideoTypeTooltip />
+            </div>
+            <div className="field-help">Select all that apply.</div>
             <div className="wizchips">
-              {["Vlogs", "Day in the life", "How-to / Tutorial", "Testimonials", "Talking heads", "Text + clip + music", "Trends", "Carousels"].map((val) => (
+              {VIDEO_TYPE_OPTIONS.map((val) => (
                 <div
                   key={val}
                   className={`selchip${videoTypes.includes(val) ? " sel" : ""}`}
@@ -1078,9 +1039,7 @@ export default function Home() {
           {/* Content pillars */}
           <div className="field">
             <div className="field-label">Draft content pillars</div>
-            <div className="field-help">
-              List 1–4 general themes you'd like to cover. These are not video formats — they're the topics and ideas you'll keep coming back to.
-            </div>
+            <div className="field-help">List 1–4 general themes you'd like to cover.</div>
             <div className="ps-example">
               <b>Example, a fitness coach:</b> Quick equipment-free workouts · Nutrition tips · Mindset content · Client transformations
             </div>
@@ -1106,6 +1065,9 @@ export default function Home() {
           >
             Create my 30-day content plan →
           </button>
+          <p style={{ fontSize: "0.78rem", color: "#aaa", textAlign: "center", marginTop: 8 }}>
+            This walkthrough uses a fixed fictional sample plan; your entries are not sent to TikTok, an AI service, or any third party.
+          </p>
           </div>
         </section>
       )}
