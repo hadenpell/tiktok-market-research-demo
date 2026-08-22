@@ -5,6 +5,9 @@ export interface NicheVideo {
   title: string;
   name?: string;
   datePosted?: string;
+  /** Raw ISO timestamp from the Apify response. Used to enforce the
+   *  recency constraint server-side; `datePosted` is display-only. */
+  createTimeISO?: string;
   views?: string;
   likes?: string;
   comments?: string;

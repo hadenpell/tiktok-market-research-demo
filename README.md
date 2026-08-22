@@ -8,15 +8,14 @@ To access the full, working product: https://tiktok30days.manus.space
 
 ## What's kept for reference
 
-[reference/research-prompts.ts](reference/research-prompts.ts) contains the two
-prompts the production app sends to a Manus agent to do the real research
-(niche video scraping + hook pattern extraction, then personalized topic banks and calendar). 
-They're included so this repo documents how the real thing works,
-but the file is never imported — nothing here calls out to Apify, TikTok, or
-an LLM.
+[reference/PROMPT_REFERENCE.md](reference/PROMPT_REFERENCE.md) contains a
+simplified version of the two prompts the production app sends to a Manus agent
+to do the real research (niche video scraping + hook pattern extraction, then
+personalized topic banks and calendar). Some internal implementation details
+have been removed.
 
-[calendar_pipeline_flowchart.html](calendar_pipeline_flowchart.html) Explains the infrastructure of the full project.
-
+[calendar_pipeline_flowchart.html](calendar_pipeline_flowchart.html) explains
+the infrastructure of the full project.
 
 ## Running it
 
