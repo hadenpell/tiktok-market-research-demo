@@ -1,7 +1,7 @@
-# Churn Profile Builder Demo
+# 30 Day TikTok Content Calendar Generator
 
-A demo-only, client-side build of the Churn Profile Builder (TikTok 30-day content
-plan generator). This repo is for showing the product experience; it does not
+A demo-only, client-side build of the TikTok 30-day content
+plan generator. This repo is for showing the product experience; it does not
 perform any real research, take payments, or require any API keys.
 
 To access the full, working product: https://tiktok30days.manus.space
